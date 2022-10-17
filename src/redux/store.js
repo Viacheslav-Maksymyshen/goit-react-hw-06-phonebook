@@ -1,16 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { createAction, createReducer } from '@reduxjs/toolkit';
+import { itemsSlice } from './mySlice/slice';
+// const toAdd = createAction('myValue/toAdd');
+// const toDelete = createAction('myValue/toDelete');
 
-const toAdd = createAction('myValue/toAdd');
-const toDelete = createAction('myValue/toDelete');
-
-const myReducer = createReducer(10, {
-  [toAdd]: (state, action) => state + action.payload,
-  [toDelete]: (state, action) => state - action.payload,
-});
+// const myReducer = createReducer([], {
+//   [toAdd]: (state, action) => state.push(action.payload),
+//   [toDelete]: (state, action) =>
+//     state.filter(item => item.id !== action.payload),
+// });
 
 export const store = configureStore({
   reducer: {
-    myValue: myReducer,
+    items: itemsSlice.reducer,
   },
 });
