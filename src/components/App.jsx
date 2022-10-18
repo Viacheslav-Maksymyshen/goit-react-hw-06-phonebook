@@ -1,41 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
 import ContactList from './ContactList';
 import styles from './App.module.css';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { toAdd, toDelete, toFilter } from '../redux/mySlice/myPhoneBookSlice';
+
 export default function App() {
-  const iniContacts = [
-    { id: '9jACRmI3_jBfX8jsbptG6', name: 'Viktoria Max', number: '32-32-32' },
-    {
-      id: 'uwZMuVbdGS70CAwWcdA2y',
-      name: 'Viacheslav Max',
-      number: '57-31-86',
-    },
-  ];
-  const [contacts, setContacts] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('contacts')) ?? iniContacts;
-  });
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+  const getContacts = state => state.items.contacts;
+  const getFilter = state => state.items.filter;
 
-  useEffect(() => {
-    const contacts = localStorage.getItem('contacts');
-    const contactsParse = JSON.parse(contacts);
+  const contacts = useSelector(getContacts);
+  console.log('🚀 ~ file: App.jsx ~ line 17 ~ App ~ contacts', contacts);
 
-    if (contactsParse) {
-      setContacts(contactsParse);
-    } else {
-      return;
-    }
-  }, []);
+  const filter = useSelector(getFilter);
+
+  // useEffect(() => {
+  //   const contacts = localStorage.getItem('contacts');
+  //   const contactsParse = JSON.parse(contacts);
+
+  //   if (contactsParse) {
+  //     dispatch(getContacts(contactsParse));
+  //   } else {
+  //     return;
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
   const handleNameChange = e => {
-    setFilter(e.target.value.trim());
+    dispatch(toFilter(e.target.value.trim()));
   };
 
   const repeatName = newName => {
@@ -45,9 +45,7 @@ export default function App() {
   };
 
   const deleteContact = contactId => {
-    setContacts(contacts =>
-      contacts.filter(contact => contact.id !== contactId)
-    );
+    dispatch(toDelete(contactId));
   };
 
   const formSubmitHandler = (name, number) => {
@@ -57,7 +55,7 @@ export default function App() {
         name,
         number,
       };
-      setContacts(prevState => [contact, ...prevState]);
+      dispatch(toAdd(contact));
     } else {
       alert(`${name} is already in contacts`);
     }
