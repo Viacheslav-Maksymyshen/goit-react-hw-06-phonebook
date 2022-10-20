@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const iniContacts = [
   {
@@ -14,11 +16,11 @@ const iniContacts = [
 ];
 
 const initialState = {
-  contacts: JSON.parse(window.localStorage.getItem('contacts')) ?? iniContacts,
+  contacts: iniContacts,
   filter: '',
 };
 
-export const phoneBookSlice = createSlice({
+const phoneBookSlice = createSlice({
   name: 'items',
   initialState,
   reducers: {
@@ -36,5 +38,17 @@ export const phoneBookSlice = createSlice({
     },
   },
 });
+const persistConfig = {
+  key: 'phoneBookContacts',
+  storage,
+  whitelist: ['contacts'],
+};
+
+export const phoneReducer = persistReducer(
+  persistConfig,
+  phoneBookSlice.reducer
+);
 
 export const { toAdd, toDelete, toFilter } = phoneBookSlice.actions;
+export const getContacts = state => state.items.contacts;
+export const getFilter = state => state.items.filter;
