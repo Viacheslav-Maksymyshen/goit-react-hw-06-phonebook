@@ -1,7 +1,15 @@
-import PropTypes from 'prop-types';
 import styles from './Filter.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { toFilter, getFilter } from '../../redux/mySlice/myPhoneBookSlice';
 
-function Filter({ filter, onInputChange }) {
+function Filter() {
+  const dispatch = useDispatch();
+  const filter = useSelector(getFilter);
+
+  const handleNameChange = e => {
+    dispatch(toFilter(e.target.value.trim()));
+  };
+
   return (
     <label className={styles.label}>
       Find contacts by name
@@ -10,17 +18,12 @@ function Filter({ filter, onInputChange }) {
         type="text"
         name="filter"
         value={filter}
-        onChange={onInputChange}
+        onChange={handleNameChange}
         pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         required
       />
     </label>
   );
 }
-
-Filter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  onInputChange: PropTypes.func.isRequired,
-};
 
 export default Filter;
